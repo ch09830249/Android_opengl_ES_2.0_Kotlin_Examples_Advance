@@ -12,6 +12,14 @@ import java.nio.FloatBuffer
 
 
 class Circle {
+    /*
+        首先要生成頂點數據
+        加載頂點到本地內存
+        加載著色器的源碼並且加載程序
+        加載著色器中的屬性
+        給著色器屬性賦值
+        開始繪畫
+    */
     private var floatBuffer: FloatBuffer? = null
     private var program = 0
     private var a_position = 0
@@ -57,7 +65,7 @@ class Circle {
      */
     val vertexData: FloatArray
         get() {
-            //切成為count個三角形，需要一個 "重複的頂點" 和一個 "圓心頂點" ,所以需要加2
+            //切成count個三角形，需要一個 "重複的頂點" 和一個 "圓心頂點" ,所以需要加2
             val nodeCount = count + 2
 
             //存頂點數據的float array
