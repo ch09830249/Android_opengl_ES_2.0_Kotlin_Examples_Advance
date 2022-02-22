@@ -1,5 +1,5 @@
 # Android_opengl_ES_2.0_AirHockey (Kotlin) 
-Here are some basic OpenGL codes for learning!!! And sorry for my misspelling on word air hockey.
+Here are some basic OpenGL codes for learning!!! And sorry for my misspelling on word "air hockey".
 ## AirHockKey (Clear color)
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/AirHockey.png)
 ## AirHockKey1 (A air hockey table is made up of two points, one line, and two triangles)
