@@ -10,7 +10,6 @@ class MatrixHelper {
          * @param f      到遠處平面的距離
          */
         fun perspetiveM(m: FloatArray, degree: Float, aspect: Float, n: Float, f: Float) {
-
             //計算焦距
             val angle = (degree * Math.PI / 180.0).toFloat()
             val a = (1.0f / Math.tan(angle / 2.0)).toFloat()

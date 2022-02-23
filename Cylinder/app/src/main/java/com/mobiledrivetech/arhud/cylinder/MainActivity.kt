@@ -1,15 +1,16 @@
 package com.mobiledrivetech.arhud.cylinder
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Build
 import android.app.ActivityManager
 import android.opengl.GLSurfaceView
-import com.example.airhockkey.AirHockKeyRenderCircle
 import android.view.MotionEvent
 import android.content.pm.ConfigurationInfo
 import android.util.Log
 import android.view.View
+import com.example.airhockkey.AirHockKeyRenderCylinder
 import com.mobiledrivetech.arhud.cylinder.Components.Cylinder
 
 
@@ -18,8 +19,8 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
     private var glSurfaceView: GLSurfaceView? = null
-    private var mPreviousX = 0f
-    private var mPreviousY = 0f
+    private var mPreviousX = 0f     //上次螢幕上觸控位置的X座標
+    private var mPreviousY = 0f     //上次螢幕上觸控位置的Y座標
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,49 +30,75 @@ class MainActivity : AppCompatActivity() {
 
     private fun initData() {
         if (supportsEs2()) {
-            val myGlRender = AirHockKeyRenderCircle(this)
-            //设置opengl版本
+            val myGlRender = AirHockKeyRenderCylinder(this)
             glSurfaceView!!.setEGLContextClientVersion(2)
             glSurfaceView!!.setRenderer(myGlRender)
-            //RenderMode 有两种，RENDERMODE_WHEN_DIRTY 和 RENDERMODE_CONTINUOUSLY，前者是懒惰渲染，需要手动调用
-            // glSurfaceView.requestRender() 才会进行更新，而后者则是不停渲染。
+            // RenderMode 有兩種，RENDERMODE_WHEN_DIRTY 和 RENDERMODE_CONTINUOUSLY，前者是懶惰渲染，需要手動調用
+            // glSurfaceView.requestRender() 才會進行更新，而後者則是不停渲染。
             glSurfaceView!!.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         } else {
-            Log.d(TAG, "不支持2.0版本")
+            Log.d(TAG, "This device does not support OpenGL ES 2.0.")
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         glSurfaceView = findViewById(R.id.glsurface)
-        glSurfaceView!!.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent): Boolean {
-                val x = event.x //当前的触控位置X坐标
-                val y = event.y //当前的触控位置X坐标
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
+        glSurfaceView!!.setOnTouchListener { v, event ->
+            val x = event.x     //獲得當前觸點X座標
+            val y = event.y     //獲得當前觸點Y座標
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {}
+                MotionEvent.ACTION_MOVE -> {
+                    val dx = x - mPreviousX     // 活動距離X座標
+                    val dy = y - mPreviousY     // 活動距離Y座標
+                    if (dx > 0) {
+                        Cylinder.instance.rotate(-dx, 1f, 0f, 0f)
+                        // Cylinder.instance.translate(0.1f, 0, 0)
+                    } else {
+                        Cylinder.instance.rotate(dx, 1f, 0f, 0f)
+                        // Cylinder.instance.translate(-0.1f, 0, 0)
                     }
-                    MotionEvent.ACTION_MOVE -> {
-                        val dx = x - mPreviousX
-                        val dy = y - mPreviousY
-                        if (dx > 0) {
-                            Cylinder.instance.rotate(-dx, 1f, 0f, 0f)
-                            //                            Cylinder.getInstance().translate(0.1f, 0, 0);
-                        } else {
-                            Cylinder.instance.rotate(dx, 1f, 0f, 0f)
-                            //                            Cylinder.getInstance().translate(-0.1f, 0, 0);
-                        }
-                        if (dy > 0) {
-                            Cylinder.instance.rotate(-dy, 0f, 0f, 1f)
-                        } else {
-                            Cylinder.instance.rotate(dy, 0f, 0f, 1f)
-                        }
+                    if (dy > 0) {
+                        Cylinder.instance.rotate(-dy, 0f, 0f, 1f)
+                    } else {
+                        Cylinder.instance.rotate(dy, 0f, 0f, 1f)
                     }
                 }
-                mPreviousX = x
-                mPreviousY = y
-                return true
             }
-        })
+            mPreviousX = x  //
+            mPreviousY = y
+            true
+        }
+
+//        glSurfaceView!!.setOnTouchListener(object : View.OnTouchListener {
+//            override fun onTouch(v: View?, event: MotionEvent): Boolean {
+//                val x = event.x     //獲得當前觸點X座標
+//                val y = event.y     //獲得當前觸點Y座標
+//                when (event.action) {
+//                    MotionEvent.ACTION_DOWN -> {}
+//                    MotionEvent.ACTION_MOVE -> {
+//                        val dx = x - mPreviousX
+//                        val dy = y - mPreviousY
+//                        if (dx > 0) {
+//                            Cylinder.instance.rotate(-dx, 1f, 0f, 0f)
+//                            // Cylinder.instance.translate(0.1f, 0, 0)
+//                        } else {
+//                            Cylinder.instance.rotate(dx, 1f, 0f, 0f)
+//                            // Cylinder.instance.translate(-0.1f, 0, 0)
+//                        }
+//                        if (dy > 0) {
+//                            Cylinder.instance.rotate(-dy, 0f, 0f, 1f)
+//                        } else {
+//                            Cylinder.instance.rotate(dy, 0f, 0f, 1f)
+//                        }
+//                    }
+//                }
+//                mPreviousX = x  //
+//                mPreviousY = y
+//                return true
+//            }
+//        })
     }
 
     private fun supportsEs2(): Boolean {

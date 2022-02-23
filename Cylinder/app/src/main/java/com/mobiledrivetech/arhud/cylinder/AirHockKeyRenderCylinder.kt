@@ -8,7 +8,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import com.mobiledrivetech.arhud.cylinder.Components.Cylinder
 
 
-class AirHockKeyRenderCircle
+class AirHockKeyRenderCylinder
     (private val mContext: Context) : Renderer {
     //private val circle: Circle? = null
     private var cylinder: Cylinder? = null
