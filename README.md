@@ -14,3 +14,7 @@ Here are some basic OpenGL codes for learning!!! Sorry for my misspelling on wor
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/AirHockey6.png)
 ## AirHockKey7 (Texture mapping)
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/AirHockey7.png)
+## Circle
+![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Circle.png)
+## Cylinder
+![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Cylinder.png)
