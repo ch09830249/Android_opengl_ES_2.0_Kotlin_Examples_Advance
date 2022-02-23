@@ -1,5 +1,6 @@
 package com.mobiledrivetech.arhud.cylinder.Helper
 
+// 產生 "透視投影矩陣"
 class MatrixHelper {
     companion object {
         /**

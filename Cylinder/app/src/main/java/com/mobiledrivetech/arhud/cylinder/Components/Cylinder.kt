@@ -4,7 +4,6 @@ import android.content.Context
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
-
 import com.example.airhockkey.Helper.ShaderHelper
 import com.example.airhockkey.Util.ReadResouceText
 import com.mobiledrivetech.arhud.cylinder.Helper.MatrixHelper
@@ -44,56 +43,60 @@ class Cylinder private constructor() {
 
     // 儲存shader中變數位置
     private var u_color = 0
-    private var offerset = 0
+    private var offerset = 0    // 第offset個float
     private lateinit var vertextData: FloatArray
+
+    //
     private val drawList: ArrayList<DrawCommand> = ArrayList()
 
     fun init(context: Context) {
-        // 設為單位矩陣
+        // 設定Model Matrix為單位矩陣
         Matrix.setIdentityM(mModelMatrix, 0)
 
-        //1 生成頂點
-        //2 加載頂點到本地內存
-        val point = Geometry.Companion.Point(0f, 0f, 0f)
+        // 1 生成頂點
+        // 2 加載頂點到本地內存
+        val point = Geometry.Companion.Point(0f, 0f, 0f)        // 圓柱中心
         val cylinder = Geometry.Companion.Cylinder(point, 0.4f, 0.5f)
         createPuck(cylinder, 50)
         initVertexData(vertextData)
 
-        //3 加載著色器的源碼並且加載程序
+        // 3 加載著色器的源碼並且加載程序
         loadShaderAndProgram(context)
 
-        //4 加載著色器中的屬性
+        // 4 加載著色器中的屬性
         loadShaderAttributes()
 
-        //5 把著色器屬性和頂點數據綁定起來，開啟使用頂點
+        // 5 把著色器屬性和頂點數據綁定起來，開啟使用頂點
         bindAttributes()
     }
 
     // 創建圓柱
-    fun createPuck(puck: Geometry.Companion.Cylinder, number: Int) {
+    fun createPuck(cylinder: Geometry.Companion.Cylinder, number: Int) {
 
         // 計算畫圓柱一共需要的頂點數
         val size = sizeOfCricleInVerTices(number) * 2 + sizeOfCylinderInVerTices(number)    // *2: 上下兩個圓
 
+        // 創建圓柱所需要的Float array
         vertextData = FloatArray(size * POSITION_COMPONENT_COUNT)
 
         // 創建頂部圓
-        val puckTop = Geometry.Companion.Circle(puck.center.translateY(puck.height / 2), puck.radius)
+        val cylinderTop = Geometry.Companion.Circle(cylinder.center.translateY(cylinder.height / 2), cylinder.radius)
 
         // 創建底部圓
-        val puckTop1 = Geometry.Companion.Circle(puck.center.translateY(-puck.height / 2), puck.radius)
+        val cylinderBottom = Geometry.Companion.Circle(cylinder.center.translateY(-cylinder.height / 2), cylinder.radius)
 
         // 畫側面
-        appendCylinder(puck, number)
+        appendCylinder(cylinder, number)
 
         // 畫頂部圓
-        appendCircle(puckTop, number, true)
+        appendCircle(cylinderTop, number, true)
 
         // 畫底部圓
-        appendCircle(puckTop1, number, false)
+        appendCircle(cylinderBottom, number, false)
     }
 
     private fun appendCircle(circle: Geometry.Companion.Circle, number: Int, color: Boolean) {
+        //
         val startVertex = offerset / FLOATS_PER_VERTEX
         val numberVertices = sizeOfCricleInVerTices(number)
         vertextData[offerset++] = circle.center.x
@@ -123,8 +126,9 @@ class Cylinder private constructor() {
     }
 
     fun appendCylinder(cylinder: Geometry.Companion.Cylinder, number: Int) {
+        //
         val startVertex = offerset / FLOATS_PER_VERTEX
-        Log.d(TAG, "$offerset/")
+        Log.d(TAG, "appendCylinder: $offerset/")
         val numberVertices = sizeOfCylinderInVerTices(number)
         val yStart = cylinder.center.y - cylinder.height / 2
         val yEed = cylinder.center.y + cylinder.height / 2
@@ -188,6 +192,7 @@ class Cylinder private constructor() {
 
     /**
      * 根據屏幕寬高創建正交矩陣，修復寬高比問題
+     * (這裡是創建 "透視投影矩陣" 和 "視圖矩陣")
      *
      * @param width
      * @param height
@@ -223,14 +228,14 @@ class Cylinder private constructor() {
             0, mModelMatrix, 0)
     }
 
-    fun translate(x: Float, y: Float, z: Float) //设置沿xyz轴移动
+    fun translate(x: Float, y: Float, z: Float) // 設置沿xyz軸移動
     {
         Log.d(TAG, "translate")
         Matrix.translateM(mModelMatrix, 0, x, y, z)
     }
 
     // 旋轉
-    fun rotate(angle: Float, x: Float, y: Float, z: Float) { // 设置绕xyz轴移动
+    fun rotate(angle: Float, x: Float, y: Float, z: Float) { // 設置繞xyz軸移動
         Log.d(TAG, "rotate")
         Matrix.rotateM(mModelMatrix, 0, angle, x, y, z)
     }
@@ -246,10 +251,8 @@ class Cylinder private constructor() {
     }
 
     companion object {
-        // 每个顶点包含的数据个数 （ x 和 y ）
         private const val POSITION_COMPONENT_COUNT = 3
 
-        //每个顶点占用4个字节
         private const val BYTES_PER_FLOAT = 4
         const val FLOATS_PER_VERTEX = 3
 
@@ -257,7 +260,7 @@ class Cylinder private constructor() {
 
         private fun sizeOfCricleInVerTices(number: Int): Int {
             // 切成number個三角形，需要一個重複的頂點和一個圓心頂點,所以需要加2
-            return 1 + number + 1   // 2: 圓心, 頂點重複才能圍成圓
+            return 1 + number + 1   // 2: (圓心, 頂點重複)才能圍成圓
         }
 
         private fun sizeOfCylinderInVerTices(number: Int): Int {
