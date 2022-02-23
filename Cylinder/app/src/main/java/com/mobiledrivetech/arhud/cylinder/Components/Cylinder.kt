@@ -103,7 +103,7 @@ class Cylinder private constructor() {
         vertextData[offerset++] = circle.center.y
         vertextData[offerset++] = circle.center.z
         for (i in 0..number) {
-            //计算每个圆心角的角度
+            // 計算每個圓心角的角度
             val angle = i.toFloat() / number.toFloat() * (Math.PI.toFloat() * 2f)
             vertextData[offerset++] = circle.center.x + circle.radius * Math.cos(angle.toDouble())
                 .toFloat()
