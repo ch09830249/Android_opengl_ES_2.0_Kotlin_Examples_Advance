@@ -17,10 +17,11 @@ class AirHockeyRenderer(context: Context): Renderer {
 
     private val context: Context = context
     private var program: Int? = null
+
     private val U_COLOR = "u_Color"
-    private var uColorLocation = 0
     private val A_POSITION = "a_Position"
     private var aPositionLocation = 0
+    private var uColorLocation = 0
 
     var vertexData: FloatBuffer? = null
     val BYTES_PER_FLOAT = 4
@@ -66,10 +67,8 @@ class AirHockeyRenderer(context: Context): Renderer {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
 
         // Read the shader code from the R.raw
-        val vertexShaderSource = TextResourceReader
-            .readTextFileFromResource(context, R.raw.simple_vertex_shader)
-        val fragmentShaderSource = TextResourceReader
-            .readTextFileFromResource(context, R.raw.simple_fragment_shader)
+        val vertexShaderSource = TextResourceReader.readTextFileFromResource(context, R.raw.simple_vertex_shader)
+        val fragmentShaderSource = TextResourceReader.readTextFileFromResource(context, R.raw.simple_fragment_shader)
 
         // Compile the shader code
         val vertexShader = ShaderHelper.compileVertexShader(vertexShaderSource)
@@ -108,26 +107,21 @@ class AirHockeyRenderer(context: Context): Renderer {
         // Set the viewport size (Tell OpenGL the size of the surface it has available for rendering)
         glViewport(0, 0, width, height)    // Tell OpenGL the size of the surface it has available for rendering
     }
-
     // When it’s time to draw a frame.
     override fun onDrawFrame(glUnused: GL10?) {
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT) // Wipe out all colors on the screen and fill the screen with the color previously defined by our call to glClearColor()
-
         // Draw the table
         // Update the value of u_Color in our shader code by calling glUniform4f()
         // White table
         glUniform4f(uColorLocation, 1.0f, 1.0f, 1.0f, 1.0f)
         glDrawArrays(GL_TRIANGLES, 0, 6) // 0: start    6: the number of vertices
-
         // Draw the Dividing Line
         glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f)
         glDrawArrays(GL_LINES, 6, 2)
-
         // Draw the first mallet blue
         glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f)
         glDrawArrays(GL_POINTS, 8, 1)
-
         // Draw the second mallet red
         glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f)
         glDrawArrays(GL_POINTS, 9, 1)

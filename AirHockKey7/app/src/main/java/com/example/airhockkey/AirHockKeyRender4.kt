@@ -77,6 +77,9 @@ class AirHockKeyRender4(context: Context) : Renderer {
         //繞著x軸旋轉-60度
         Matrix.rotateM(mModelMatrix, 0, -60f, 1.0f, 0f, 0f)
 
+        //沿y軸拉伸1.5倍
+        Matrix.scaleM(mModelMatrix, 0, 1f, 1.5f, 1f)
+
         val temp = FloatArray(16)
 
         //矩陣相乘

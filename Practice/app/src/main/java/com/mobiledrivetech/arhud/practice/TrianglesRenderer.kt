@@ -35,6 +35,7 @@ class TrianglesRenderer : GLSurfaceView.Renderer {
     private val mMVPMatrix = FloatArray(16)
 
     /** Store our model data in a float buffer.  */
+    // 三個三角形的點
     private val mTriangle1Vertices: FloatBuffer
     private val mTriangle2Vertices: FloatBuffer
     private val mTriangle3Vertices: FloatBuffer
@@ -52,6 +53,7 @@ class TrianglesRenderer : GLSurfaceView.Renderer {
     private val mBytesPerFloat = 4
 
     /** How many elements per vertex.  */
+    // X Y Z R G B A
     private val mStrideBytes = 7 * mBytesPerFloat
 
     /** Offset of the position data.  */
@@ -65,6 +67,7 @@ class TrianglesRenderer : GLSurfaceView.Renderer {
 
     /** Size of the color data in elements.  */
     private val mColorDataSize = 4
+
     override fun onSurfaceCreated(glUnused: GL10?, config: EGLConfig?) {
         // Set the background clear color to gray.
         GLES20.glClearColor(0.5f, 0.5f, 0.5f, 0.5f)
@@ -88,7 +91,9 @@ class TrianglesRenderer : GLSurfaceView.Renderer {
         // NOTE: In OpenGL 1, a ModelView matrix is used, which is a combination of a model and
         // view matrix. In OpenGL 2, we can keep track of these matrices separately if we choose.
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ)
-        val vertexShader = """  uniform mat4 u_MVPMatrix;      
+
+        val vertexShader = """  
+                                uniform mat4 u_MVPMatrix;      
                                 attribute vec4 a_Position;     
                                 attribute vec4 a_Color;        
                                 varying vec4 v_Color;          
@@ -99,13 +104,14 @@ class TrianglesRenderer : GLSurfaceView.Renderer {
                                                * a_Position;   
                                 }                              
                                 """ // normalized screen coordinates.
-        val fragmentShader = """ precision mediump float;       
+        val fragmentShader = """ 
+                                 precision mediump float;       
                                  varying vec4 v_Color;          
                                  void main()                    
                                  {                              
                                     gl_FragColor = v_Color;     
                                  }                              
-                                """
+                             """
 
         // Load in the vertex shader.
         var vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER)
@@ -242,14 +248,12 @@ class TrianglesRenderer : GLSurfaceView.Renderer {
     private fun drawTriangle(aTriangleBuffer: FloatBuffer) {
         // Pass in the position information
         aTriangleBuffer.position(mPositionOffset)
-        GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false,
-            mStrideBytes, aTriangleBuffer)
+        GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false, mStrideBytes, aTriangleBuffer)
         GLES20.glEnableVertexAttribArray(mPositionHandle)
 
         // Pass in the color information
         aTriangleBuffer.position(mColorOffset)
-        GLES20.glVertexAttribPointer(mColorHandle, mColorDataSize, GLES20.GL_FLOAT, false,
-            mStrideBytes, aTriangleBuffer)
+        GLES20.glVertexAttribPointer(mColorHandle, mColorDataSize, GLES20.GL_FLOAT, false, mStrideBytes, aTriangleBuffer)
         GLES20.glEnableVertexAttribArray(mColorHandle)
 
         // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
@@ -308,7 +312,7 @@ class TrianglesRenderer : GLSurfaceView.Renderer {
             .order(ByteOrder.nativeOrder()).asFloatBuffer()
         mTriangle3Vertices = ByteBuffer.allocateDirect(triangle3VerticesData.size * mBytesPerFloat)
             .order(ByteOrder.nativeOrder()).asFloatBuffer()
-        
+
         mTriangle1Vertices.put(triangle1VerticesData).position(0)
         mTriangle2Vertices.put(triangle2VerticesData).position(0)
         mTriangle3Vertices.put(triangle3VerticesData).position(0)

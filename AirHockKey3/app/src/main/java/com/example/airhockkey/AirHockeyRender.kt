@@ -12,7 +12,7 @@ import java.nio.FloatBuffer
 
 
 
-class AirHockKeyRender(private val mContext: Context) : Renderer {
+class AirHockeyRender(private val mContext: Context) : Renderer {
 
     private val verticeData: FloatBuffer
 

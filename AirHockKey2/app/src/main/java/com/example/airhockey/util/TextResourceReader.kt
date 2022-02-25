@@ -27,12 +27,11 @@ class TextResourceReader {
                     }
                 } while (true)
             } catch (e: IOException) {
-                throw RuntimeException(
-                        "Could not open resource: " + resourceId, e);
+                throw RuntimeException("Could not open resource: " + resourceId, e)
             } catch (nfe: Resources.NotFoundException) {
-                throw RuntimeException("Resource not found: " + resourceId, nfe);
+                throw RuntimeException("Resource not found: " + resourceId, nfe)
             }
-            return body.toString();
+            return body.toString()
         }
     }
 }

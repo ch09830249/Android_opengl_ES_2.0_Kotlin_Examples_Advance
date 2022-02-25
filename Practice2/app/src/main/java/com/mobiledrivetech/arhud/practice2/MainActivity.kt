@@ -1,59 +1,39 @@
-package com.example.airhockkey
+package com.mobiledrivetech.arhud.practice2
 
+import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.pm.ConfigurationInfo
+import android.opengl.GLSurfaceView
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Build
-import android.app.ActivityManager
-import android.content.Context
 import android.util.Log
-import android.opengl.GLSurfaceView
 
 
 class MainActivity : AppCompatActivity() {
-
-    private val TAG = "AirHockKey MainActivity"
+    private val TAG = "MainActivity"
     private var glSurfaceView: GLSurfaceView? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initView()
+        glSurfaceView = findViewById(R.id.glsurface)
         initData()
     }
-
     private fun initData() {
         if (supportsEs2()) {
-            val myGlRender = AirHockeyRender(this)
-            // Set opengl version (Request an OpenGL ES 2.0 compatible context)
+            val myGlRender = AirHockKeyRenderCylinder(this)
             glSurfaceView!!.setEGLContextClientVersion(2)
-
-            // Assign our renderer
             glSurfaceView!!.setRenderer(myGlRender)
-
-            // 2 RenderModes: (RENDERMODE_WHEN_DIRTY) (RENDERMODE_CONTINUOUSLY)
-            // RENDERMODE_WHEN_DIRTY: Render when the func glSurfaceView.requestRender() calls
-            // RENDERMODE_CONTINUOUSLY: Render constantly based on the user-given FPS
+            // RenderMode 有兩種，RENDERMODE_WHEN_DIRTY 和 RENDERMODE_CONTINUOUSLY，前者是懶惰渲染，需要手動調用
+            // glSurfaceView.requestRender() 才會進行更新，而後者則是不停渲染。
             glSurfaceView!!.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         } else {
             Log.d(TAG, "This device does not support OpenGL ES 2.0.")
         }
     }
-
-    // find GLSurfaceView ID
-    private fun initView() {
-        glSurfaceView = findViewById(R.id.glsurface)
-    }
-
     private fun supportsEs2(): Boolean {
-        // Check if the system supports OpenGL ES 2.0
-        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val configurationInfo = activityManager.deviceConfigurationInfo
-
-        // Even though the latest emulator supports OpenGL ES 2.0,
-        // there is a bug where it doesn't set the reqGlEsVersion so
-        // the above check doesn't work. The below will detect if the
-        // app is running on an emulator, and assume that it supports
-        // OpenGL ES 2.0.
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val configurationInfo: ConfigurationInfo = activityManager.deviceConfigurationInfo
         return (configurationInfo.reqGlEsVersion >= 0x20000
                 || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1
                 && (Build.FINGERPRINT.startsWith("generic")
@@ -62,14 +42,13 @@ class MainActivity : AppCompatActivity() {
                 || Build.MODEL.contains("Emulator")
                 || Build.MODEL.contains("Android SDK built for x86"))))
     }
-
     override fun onResume() {
         super.onResume()
         glSurfaceView!!.onResume()
     }
-
     override fun onPause() {
         super.onPause()
         glSurfaceView!!.onPause()
     }
 }
+
