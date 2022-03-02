@@ -22,18 +22,22 @@ class CubesRenderer : GLSurfaceView.Renderer {
      * Store the model matrix. This matrix is used to move models from object space (where each model can be thought
      * of being located at the center of the universe) to world space.
      */
+    // ok
     private val mModelMatrix = FloatArray(16)
 
     /**
      * Store the view matrix. This can be thought of as our camera. This matrix transforms world space to eye space;
      * it positions things relative to our eye.
      */
+    // ok
     private val mViewMatrix = FloatArray(16)
 
     /** Store the projection matrix. This is used to project the scene onto a 2D viewport.  */
+    // ok
     private val mProjectionMatrix = FloatArray(16)
 
     /** Allocate storage for the final combined matrix. This will be passed into the shader program.  */
+    // ok
     private val mMVPMatrix = FloatArray(16)
 
     /**
@@ -133,8 +137,8 @@ class CubesRenderer : GLSurfaceView.Renderer {
                 }                                                                     
             """
 
-    protected fun getFragmentShader(): String {
-        return """
+    val fragmentShader: String
+        get() = """
                     precision mediump float;       
                     varying vec4 v_Color;          
                     void main()                    
@@ -142,7 +146,7 @@ class CubesRenderer : GLSurfaceView.Renderer {
                        gl_FragColor = v_Color;     
                     }                              
                """
-    }
+
 
     override fun onSurfaceCreated(glUnused: GL10?, config: EGLConfig?) {
         // Set the background clear color to black.
@@ -174,12 +178,10 @@ class CubesRenderer : GLSurfaceView.Renderer {
         // view matrix. In OpenGL 2, we can keep track of these matrices separately if we choose.
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ)
         val vertexShader = vertexShader
-        val fragmentShader = getFragmentShader()
+        val fragmentShader = fragmentShader
         val vertexShaderHandle = compileShader(GLES20.GL_VERTEX_SHADER, vertexShader)
         val fragmentShaderHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, fragmentShader)
-        mPerVertexProgramHandle = createAndLinkProgram(vertexShaderHandle,
-            fragmentShaderHandle,
-            arrayOf("a_Position", "a_Color", "a_Normal"))
+        mPerVertexProgramHandle = createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle, arrayOf("a_Position", "a_Color", "a_Normal"))
 
         // Define a simple shader program for our point.
         val pointVertexShader = """
@@ -199,8 +201,7 @@ class CubesRenderer : GLSurfaceView.Renderer {
                                     }                              
                                   """
         val pointVertexShaderHandle = compileShader(GLES20.GL_VERTEX_SHADER, pointVertexShader)
-        val pointFragmentShaderHandle =
-            compileShader(GLES20.GL_FRAGMENT_SHADER, pointFragmentShader)
+        val pointFragmentShaderHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, pointFragmentShader)
         mPointProgramHandle = createAndLinkProgram(pointVertexShaderHandle, pointFragmentShaderHandle, arrayOf("a_Position"))
     }
 
@@ -216,6 +217,7 @@ class CubesRenderer : GLSurfaceView.Renderer {
         val top = 1.0f
         val near = 1.0f
         val far = 10.0f
+        // Perspective projection matrix
         Matrix.frustumM(mProjectionMatrix, 0, left, ratio, bottom, top, near, far)
     }
 
@@ -246,21 +248,26 @@ class CubesRenderer : GLSurfaceView.Renderer {
         Matrix.multiplyMV(mLightPosInEyeSpace, 0, mViewMatrix, 0, mLightPosInWorldSpace, 0)
 
         // Draw some cubes.
+        // Right cube
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.translateM(mModelMatrix, 0, 4.0f, 0.0f, -7.0f)
         Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 0.0f, 0.0f)
         drawCube()
+        // Left cube
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.translateM(mModelMatrix, 0, -4.0f, 0.0f, -7.0f)
         Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f)
         drawCube()
+        // Top cube
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.translateM(mModelMatrix, 0, 0.0f, 4.0f, -7.0f)
         Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 0.0f, 0.0f, 1.0f)
         drawCube()
+        // Bottom cube
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.translateM(mModelMatrix, 0, 0.0f, -4.0f, -7.0f)
         drawCube()
+        // Middle cube
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -5.0f)
         Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 1.0f, 0.0f)
@@ -305,8 +312,7 @@ class CubesRenderer : GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0)
 
         // Pass in the light position in eye space.
-        GLES20.glUniform3f(mLightPosHandle,
-            mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2])
+        GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2])
 
         // Draw the cube.
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36)
@@ -320,8 +326,7 @@ class CubesRenderer : GLSurfaceView.Renderer {
         val pointPositionHandle = GLES20.glGetAttribLocation(mPointProgramHandle, "a_Position")
 
         // Pass in the position.
-        GLES20.glVertexAttrib3f(pointPositionHandle,
-            mLightPosInModelSpace[0], mLightPosInModelSpace[1], mLightPosInModelSpace[2])
+        GLES20.glVertexAttrib3f(pointPositionHandle, mLightPosInModelSpace[0], mLightPosInModelSpace[1], mLightPosInModelSpace[2])
 
         // Since we are not using a buffer object, disable vertex arrays for this attribute.
         GLES20.glDisableVertexAttribArray(pointPositionHandle)
@@ -594,9 +599,11 @@ class CubesRenderer : GLSurfaceView.Renderer {
         mCubePositions = ByteBuffer.allocateDirect(cubePositionData.size * mBytesPerFloat)
             .order(ByteOrder.nativeOrder()).asFloatBuffer()
         mCubePositions.put(cubePositionData).position(0)
+
         mCubeColors = ByteBuffer.allocateDirect(cubeColorData.size * mBytesPerFloat)
             .order(ByteOrder.nativeOrder()).asFloatBuffer()
         mCubeColors.put(cubeColorData).position(0)
+
         mCubeNormals = ByteBuffer.allocateDirect(cubeNormalData.size * mBytesPerFloat)
             .order(ByteOrder.nativeOrder()).asFloatBuffer()
         mCubeNormals.put(cubeNormalData).position(0)
