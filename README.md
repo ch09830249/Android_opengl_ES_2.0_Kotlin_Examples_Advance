@@ -30,3 +30,5 @@ Here are some basic OpenGL codes for learning!!! Sorry for my misspelling on wor
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Pictures/Practice3.png)
 ## Practice4
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Pictures/Practice4.png)
+## sinewave
+![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Pictures/sinewave.gif)
