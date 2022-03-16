@@ -20,6 +20,7 @@ Here are some basic OpenGL codes for learning!!! Sorry for my misspelling on wor
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Pictures/Cylinder.png)
 ## Practice
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Pictures/Practice.png)
+![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Pictures/Practice.gif)
 ## Practice1
 ![image](https://github.com/ch09830249/Android_opengl_ES_2.0_AirHockey_Kotlin/blob/master/Pictures/Practice1.png)
 ## Practice2

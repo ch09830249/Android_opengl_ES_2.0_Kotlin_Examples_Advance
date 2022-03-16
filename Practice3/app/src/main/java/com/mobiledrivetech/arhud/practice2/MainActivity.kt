@@ -1,6 +1,5 @@
 package com.mobiledrivetech.arhud.practice3
 
-import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.pm.ConfigurationInfo
 import android.opengl.GLSurfaceView

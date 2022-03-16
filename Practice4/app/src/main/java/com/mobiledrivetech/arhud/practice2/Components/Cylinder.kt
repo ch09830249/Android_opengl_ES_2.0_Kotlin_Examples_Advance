@@ -17,15 +17,12 @@ class Cylinder private constructor() {
     private val TAG = "Cylinder"
     private var floatBuffer: FloatBuffer? = null    // A reference of the Buffer in the native environment
     private var program = 0                         // program ID
-//    private var a_position = 0                      // a_Position variable location (vertex shader)
-//    private var u_matrix = 0                        // u_Matrix variable location   (vertex shader)
-//    private var u_color = 0                         // u_Color variable location    (fragment shader)
-//    private var lightColor = 0
+
     private var a_position = 0
     private var u_matrix = 0
-    private var light = 0
-    private var lightColor = 0
-    private var objectColor = 0
+    private var light_position_eye = 0
+    private var a_Color = 0
+    private var normal_vector_eye = 0
 
     private val mProjectionMatrix = FloatArray(16)          // projection matrix
     private val mModelMatrix = FloatArray(16)               // model matrix
@@ -103,14 +100,19 @@ class Cylinder private constructor() {
 
         drawList.add(object : DrawCommand {
             override fun draw() {
-                GLES20.glUniform4f(light, 5.0f, 4.0f, 2.0f, 0f)
+                // 設置法向量
+                if (color == "Green") {
+                    GLES20.glUniform3f(normal_vector_eye, 0.0f, 1.0f, 0.0f)
+                } else {
+                    GLES20.glUniform3f(normal_vector_eye, 0.0f, -1.0f, 0.0f)
+                }
+
                 // Select color based on the input
                 when (color) {
-                    "Red" -> GLES20.glUniform4f(objectColor, 1.0f, 0.0f, 0.0f, 1f)
-                    "Green" -> GLES20.glUniform4f(objectColor, 0.0f, 1.0f, 0.0f, 1f)
-                    else -> GLES20.glUniform4f(objectColor, 0.0f, 0.0f, 1.0f, 1f)
+                    "Red" -> GLES20.glUniform4f(a_Color, 1.0f, 0.0f, 0.0f, 1f)
+                    "Green" -> GLES20.glUniform4f(a_Color, 0.0f, 1.0f, 0.0f, 1f)
+                    else -> GLES20.glUniform4f(a_Color, 0.0f, 0.0f, 1.0f, 1f)
                 }
-                GLES20.glUniform4f(lightColor, 1.0f, 1.0f, 1.0f, 1f)
                 // Draw the circle (Primitive: GL_TRIANGLE_FAN)
                 GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, startVertex, numberVertices)
             }
@@ -138,10 +140,10 @@ class Cylinder private constructor() {
         Log.d(TAG, "$startVertex/$numberVertices")
         drawList.add(object : DrawCommand {
             override fun draw() {
-                GLES20.glUniform4f(light, 2.0f, 2.0f, 2.0f, 0f)
+                // 設置法向量
+
                 // The color of the cylinder's side: White
-                GLES20.glUniform4f(objectColor, 1.0f, 1.0f, 1.0f, 1f)
-                GLES20.glUniform4f(lightColor, 1.0f, 1.0f, 1.0f, 1f)
+                GLES20.glUniform4f(a_Color, 1.0f, 1.0f, 1.0f, 1f)
                 // Draw the side of the cylinder (Primitive: GL_TRIANGLE_STRIP)
                 GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, startVertex, numberVertices)
             }
@@ -173,11 +175,11 @@ class Cylinder private constructor() {
     }
 
     fun loadShaderAttributes() {
-        objectColor = GLES20.glGetUniformLocation(program, "objectColor")
-        light = GLES20.glGetUniformLocation(program, "light")
+        a_Color = GLES20.glGetUniformLocation(program, "a_Color")
+        light_position_eye = GLES20.glGetUniformLocation(program, "light_position_eye")
         a_position = GLES20.glGetAttribLocation(program, "a_Position")
         u_matrix = GLES20.glGetUniformLocation(program, "u_Matrix")
-        lightColor = GLES20.glGetUniformLocation(program, "lightColor")
+        normal_vector_eye = GLES20.glGetUniformLocation(program, "normal_vector_eye")
     }
 
     fun bindAttributes() {
@@ -204,6 +206,9 @@ class Cylinder private constructor() {
      * 開始畫圖
      */
     fun draw() {
+        // 設定光源位置
+        GLES20.glUniform3f(light_position_eye, 0.0f, 1.0f, 1.5f)
+
         Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
         Matrix.multiplyMM(mViewModelProjectionMatrix, 0, mViewProjectionMatrix, 0, mModelMatrix, 0)
         GLES20.glUniformMatrix4fv(u_matrix, 1, false, mViewModelProjectionMatrix, 0)

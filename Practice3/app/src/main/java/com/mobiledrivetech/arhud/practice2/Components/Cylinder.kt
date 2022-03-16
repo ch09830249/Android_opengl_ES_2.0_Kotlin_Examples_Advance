@@ -132,8 +132,8 @@ class Cylinder private constructor() {
         drawList.add(object : DrawCommand {
             override fun draw() {
                 // The color of the cylinder's side: White
-                GLES20.glUniform4f(u_color, 1.0f, 1.0f, 1.0f, 1f)
-                GLES20.glUniform4f(lightColor, 1.0f, 1.0f, 1.0f, 1f)
+                GLES20.glUniform4f(u_color, 1.0f, 1.0f, 1.0f, 1.0f)
+                GLES20.glUniform4f(lightColor, 1.0f, 1.0f, 1.0f, 1.0f)
                 // Draw the side of the cylinder (Primitive: GL_TRIANGLE_STRIP)
                 GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, startVertex, numberVertices)
             }
